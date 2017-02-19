@@ -1,0 +1,180 @@
+//   ****************************************************************************************************
+//   Moturoa Transmissions - MQTT Test Client - wildthings.io - Birgit Bachler 2017
+//    
+//   with a LDR on A0 and a LED on D4 for Wemos D1
+//
+//        credits to
+//        James Lewis : https://www.baldengineer.com/mqtt-tutorial.html with adaptions as in the comments by Dag Rende & William Brinkman
+//        ItKindaWorks : http://github.com/ItKindaWorks - https://github.com/ItKindaWorks/ESP8266/blob/master/Home%20Automation/Part%201/ESP8266_SimpleMQTT/ESP8266_SimpleMQTT.ino
+//        Paulus Schoutsen : https://home-assistant.io/blog/2015/10/11/measure-temperature-with-esp8266-and-report-to-mqtt/
+//
+//        Requires PubSubClient found here: https://github.com/knolleary/pubsubclient
+//   **************************************************************************************************** 
+
+#include <PubSubClient.h>
+#include <ESP8266WiFi.h>
+
+#define node_name "ESP8266_LDR"
+
+#define ledTopic "test/led"
+#define ldrTopic "test/ldr"
+#define confirmTopic "test/confirm"
+
+
+// Broker Setup
+const char* ssid = "Moturoa_Transmissions";
+const char* password = "xxx";
+const char* mqtt_server = "192.168.42.1";
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+
+const byte ledPin = D4;
+const byte sensorPin = A0;
+
+void callback(char* topic, byte * payload, unsigned int length) {
+  //convert topic to string to make it easier to work with
+  String topicStr = String((char*)topic);
+
+  //Print out some debugging info
+  Serial.println("Callback update.");
+
+  Serial.print("Topic: ");
+  Serial.println(topic);
+
+
+  //if (topic == ledTopic) {
+  if (strcmp(topic, ledTopic) == 0)
+  {
+    Serial.print(payload[0]);
+
+
+
+    for (int i = 0; i < length; i++) {
+      char receivedChar = (char)payload[i];
+      Serial.print(receivedChar);
+      if (receivedChar == '1') {
+        digitalWrite(ledPin, HIGH);
+        client.publish(confirmTopic, "LED On");
+
+      }
+      if (receivedChar == '0') {
+        digitalWrite(ledPin, LOW);
+        client.publish(confirmTopic, "LED Off");
+
+
+      }
+    }
+  }
+  else //
+  {
+    client.publish(confirmTopic, "ERROR");
+  }
+}
+
+void reconnect() {
+  //attempt to connect to the wifi if connection is lost
+  if (WiFi.status() != WL_CONNECTED) {
+    //debug printing
+    Serial.print("Connecting to ");
+    Serial.println(ssid);
+
+    //loop while we wait for connection
+    while (WiFi.status() != WL_CONNECTED) {
+      delay(500);
+      Serial.print(".");
+    }
+
+    //print out some more debug once connected
+    Serial.println("");
+    Serial.println("WiFi connected");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
+  }
+
+  //make sure we are connected to WIFI before attemping to reconnect to MQTT
+  if (WiFi.status() == WL_CONNECTED) {
+    // Loop until we're reconnected to the MQTT server
+    while (!client.connected()) {
+      Serial.print("Attempting MQTT connection...");
+      // Attempt to connect
+      if (client.connect(node_name)) {
+        Serial.println("connected");
+        // ... and subscribe to topic
+        client.subscribe(ledTopic);
+
+      } else {
+        Serial.print("failed, rc=");
+        Serial.print(client.state());
+        Serial.println(" try again in 5 seconds");
+        // Wait 5 seconds before retrying
+        delay(5000);
+      }
+    }
+  }
+}
+
+
+void setup() {
+  //initialize the light as an output and set to LOW (off)
+  pinMode(ledPin, OUTPUT);
+  digitalWrite(ledPin, LOW);
+
+  //start the serial line for debugging
+  Serial.begin(9600);
+  delay(100);
+
+
+  //start wifi subsystem
+  WiFi.begin(ssid, password);
+  client.setServer(mqtt_server, 1883);
+  client.setCallback(callback);
+
+  //attempt to connect to the WIFI network and then connect to the MQTT server
+  reconnect();
+
+  //wait a bit before starting the main loop
+  delay(2000);
+}
+
+long lastMsg = 0;
+float ldr = 0.0;
+float diff = 5.0;
+
+
+void loop() {
+
+  //reconnect if connection is lost
+  if (!client.connected() && WiFi.status() == 3) {
+    reconnect();
+  }
+
+  //maintain MQTT connection
+  client.loop();
+
+  long now = millis();
+  if (now - lastMsg > 5000) {
+    lastMsg = now;
+
+    float newLDR = analogRead(sensorPin);
+    Serial.print("measuring ");
+    Serial.println(newLDR);
+
+    if (checkBound(newLDR, ldr, diff)) {
+      ldr = newLDR;
+      Serial.print("New light value:");
+      Serial.println(String(ldr).c_str());
+      client.publish(ldrTopic, String(ldr).c_str(), true);
+    }
+
+    //MUST delay to allow ESP8266 WIFI functions to run
+    delay(10);
+
+
+  }
+}
+
+bool checkBound(float newValue, float prevValue, float maxDiff) {
+  return !isnan(newValue) &&
+         (newValue < prevValue - maxDiff || newValue > prevValue + maxDiff);
+}
