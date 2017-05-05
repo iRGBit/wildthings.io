@@ -1,4 +1,4 @@
-rtist statement
+### Artist statement
 _Hardware, software, mixed media. Dimensions variable_
 A networked series of interventions in the surrounding environment of Moturoa Stream that senses and monitors change in a range of variables, such as temperature, humidity and conductivity. Together the stations enter a conversation beyond their mere weather-reflective qualities and given structure of land, water and its human and non-human encounter to form a visually engaging addition to the ecosystem in which they are situated. 
 Moturoa Transmissions is a wildthings.io project
