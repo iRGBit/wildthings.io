@@ -1,17 +1,17 @@
-//             _ _     _ _   _     _                   _       
-//            (_) |   | | | | |   (_)                 (_)      
-//   __      ___| | __| | |_| |__  _ _ __   __ _ ___   _  ___  
+//             _ _     _ _   _     _                   _
+//            (_) |   | | | | |   (_)                 (_)
+//   __      ___| | __| | |_| |__  _ _ __   __ _ ___   _  ___
 //   \ \ /\ / / | |/ _` | __| '_ \| | '_ \ / _` / __| | |/ _ \ 
 //    \ V  V /| | | (_| | |_| | | | | | | | (_| \__ \_| | (_) |
-//     \_/\_/ |_|_|\__,_|\__|_| |_|_|_| |_|\__, |___(_)_|\___/ 
-                                        __/ |              
-                                       |___/               
+//     \_/\_/ |_|_|\__,_|\__|_| |_|_|_| |_|\__, |___(_)_|\___/
+//                                        __/ |
+//                                       |___/
 
-//   Papawai Transmissions 
+//   Papawai Transmissions
 //   MQTT Client for Wemos D1
 //   wildthings.io - Birgit Bachler, Aotearoa/New Zealand, 2018
 //
-//   Wemos D1 with a humidity and temperature sensor DHT11 monitoring the environment of Moturoa Stream, Te Upoko a te Ika a Maui/Wellington
+//   Wemos D1 with a humidity and temperature sensor DHT22 monitoring the environment of Moturoa Stream, Te Upoko a te Ika a Maui/Wellington
 //
 //    credits to
 //   James Lewis : https://www.baldengineer.com/mqtt-tutorial.html with adaptions as in the comments by Dag Rende & William Brinkman
@@ -22,20 +22,24 @@
 //
 
 
+
 //DHT
 #include "DHT.h"
 #define DHTPIN D4     // what pin we're connected to
-#define DHTTYPE DHT22   // DHT 22
+#define DHTTYPE DHT11  // DHT 11 / DHT 22  (AM2302), AM2321 / DHT 21 (AM2301)
 
 
 // MQTT
 #include <PubSubClient.h>
 #include <ESP8266WiFi.h>
 #define node_name "Moturoa_takawai"
-#define hTopic "moturoa/takawai"
-#define tTopic "moturoa/atemp"
-#define hpubTopic "moturoa/glowworm1/takawai"
-#define tpubTopic "moturoa/glowworm1/atemp"
+#define hTopic "moturoa/takawaiea" // air humidity | takawai-humidity ea-air
+#define tTopic "moturoa/paemahanaea" // air temperature | paemahanea-temperature ea-air
+#define hpubTopic "moturoa/glowworm1/takawaiea" // air humidity | takawai-humidity ea-air
+#define tpubTopic "moturoa/glowworm1/paemahanaea" // air temperature | paemahanea-temperature ea-air
+
+// DEBUG
+boolean debug = false; // set to true to read data via Serial
 
 unsigned long boardTime = 0 ;
 boolean which = false;
@@ -55,12 +59,12 @@ void callback(char* topic, byte * payload, unsigned int length) {
   //convert topic to string to make it easier to work with
 
   //Print out some debugging info
-  Serial.println("Callback update.");
+  if (debug) {
+    Serial.println("Callback update.");
 
-  Serial.print("Topic: ");
-  Serial.println(topic);
-
-  //client.publish(confirmTopic, "ERROR");
+    Serial.print("Topic: ");
+    Serial.println(topic);
+  }
 
 }
 
@@ -68,18 +72,19 @@ void reconnect() {
   //attempt to connect to the wifi if connection is lost
   if (WiFi.status() != WL_CONNECTED) {
     long waitTime = millis();
-    //debug printing
-    //    Serial.print("Connecting to ");
-    //    Serial.println(ssid);
-    //
+    if (debug) {
+      //debug printing
+      Serial.print("Connecting to ");
+      Serial.println(ssid);
+    }
 
     //loop while we wait for connection
     while (WiFi.status() != WL_CONNECTED) {
       delay(500);
-      //      Serial.print(".");
+      if (debug) {
+        Serial.print(".");
+      }
     }
-
-    //print out some more debug once connected
 
 
   }
@@ -88,20 +93,26 @@ void reconnect() {
   if (WiFi.status() == WL_CONNECTED) {
     // Loop until we're reconnected to the MQTT server
     while (!client.connected()) {
-      Serial.print("Attempting MQTT connection...");
+      if (debug) {
+        Serial.print("Attempting MQTT connection...");
+      }
       // Attempt to connect
       if (client.connect(node_name)) {
         client.disconnect();
         client.connect(node_name);
-        Serial.println("connected");
+        if (debug) {
+          Serial.println("connected");
+        }
         // ... and subscribe to topic
         //       client.subscribe(tempTopic);
 
 
       } else {
-        Serial.print("failed, rc=");
-        Serial.print(client.state());
-        Serial.println(" try again in 5 seconds");
+        if (debug) {
+          Serial.print("failed, rc=");
+          Serial.print(client.state());
+          Serial.println(" try again in 5 seconds");
+        }
         // Wait 5 seconds before retrying
         delay(5000);
       }
@@ -114,7 +125,9 @@ void setup() {
 
 
   //start the serial line for debugging
-  Serial.begin(9600);
+  if (debug) {
+    Serial.begin(9600);
+  }
   delay(100);
 
 
@@ -142,15 +155,20 @@ void loop() {
 
   client.loop();
   boardTime = millis();
-  if ((boardTime % 60000) == 0) {
+  if (debug){
+    wait=1000;
+    }
+  if ((boardTime % wait) == 0) {
     if (which == false) { // do humidity
       float h = dht.readHumidity();
       char result[20] = "";
       dtostrf(h, 3, 1, result);
       delay(10);
-      // Serial.println(result);
+      if (debug) {
+        Serial.println(result);
+      }
       client.publish(hTopic, result);
-    //  client.publish(hpubTopic, result);
+      //  client.publish(hpubTopic, result);
       which = true;
     }
     else { //do humid
@@ -158,7 +176,9 @@ void loop() {
       char tresult[20] = "";
       dtostrf(t, 3, 1, tresult);
       delay(10);
-      // Serial.println(tresult);
+      if (debug) {
+        Serial.println(tresult);
+      }
       client.publish(tTopic, tresult);
       //client.publish(tpubTopic, tresult);
       which = false;
