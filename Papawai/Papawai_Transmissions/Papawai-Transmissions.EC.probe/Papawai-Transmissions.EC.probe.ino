@@ -4,8 +4,8 @@
 //   \ \ /\ / / | |/ _` | __| '_ \| | '_ \ / _` / __| | |/ _ \ 
 //    \ V  V /| | | (_| | |_| | | | | | | | (_| \__ \_| | (_) |
 //     \_/\_/ |_|_|\__,_|\__|_| |_|_|_| |_|\__, |___(_)_|\___/
-__ / |
-| ___ /
+//                                         __ / |
+//                                       | ___ /
 
 //   Papawai Transmissions
 //   MQTT Client for Wemos D1
@@ -25,8 +25,8 @@ __ / |
 // MQTT
 #include <PubSubClient.h>
 #include <ESP8266WiFi.h>
-#define node_name "Moutroa-test"
-#define ecTopic "moturoa/ec"
+#define node_name "Papawai-ECrua"
+#define ecTopic "moturoa/ecrua"
 #define spikeTopic "moturoa/spike"
 
 
@@ -35,7 +35,7 @@ __ / |
 
 
 //Debug Mode
-boolean debug = true; // set to true to read data via Serial
+boolean debug = false; // set to true to read data via Serial
 
 
 // Broker Setup
@@ -69,7 +69,7 @@ void callback(char* topic, byte * payload, unsigned int length) {
     //client.publish(confirmTopic, "ERROR");
 
   }
-
+}
   void reconnect() {
     //attempt to connect to the wifi if connection is lost
     if (WiFi.status() != WL_CONNECTED) {
