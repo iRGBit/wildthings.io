@@ -28,18 +28,19 @@
 #define ecTopic "papawai/katuhi"
 
 
-// EC sensor
-#define ledPin D2
+// LEDs
+int ledPins[] = {D0, D5, D6, D7, D8};
 
-int ledState = LOW;
+int ledState[5];
 
 unsigned long previousMillis = 0;
 
 const long interval = 1000;
 
 //Debug Mode
-boolean debug = false; // set to true to read data via Serial
+boolean debug = true; // set to true to read data via Serial
 
+static int count = 0;
 
 // Broker Setup
 const char* ssid = "Moturoa_Transmissions";
@@ -124,7 +125,10 @@ void reconnect() {
 
 
 void setup() {
-  pinMode(ledPin, OUTPUT);
+  for (int p = 0; p < 5; p++) {
+    pinMode(ledPins[p], OUTPUT);
+    ledState[p] = LOW;
+  }
 
   if (debug) {
     //start the serial line for debugging
@@ -158,13 +162,28 @@ void loop() {
 
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
-    if (ledState == LOW) {
-      ledState = HIGH;
+    //    if (ledState[count] == LOW) {
+    //      ledState[count] = HIGH;
+    //    }
+    //    else {
+    //      ledState[count] = LOW;
+    //    }
+    for (int p = 0; p < 5; p++) {
+      digitalWrite(ledPins[p], LOW);
     }
-    else {
-      ledState = LOW;
+    digitalWrite(ledPins[count], HIGH);
+    if (count < 4) {
+      count++;
     }
-    digitalWrite(ledPin, ledState);
+    else
+    {
+      count = 0;
+    }
+
   }
+
+  Serial.println(count);
+
+
 }
 
