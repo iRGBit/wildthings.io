@@ -6,8 +6,11 @@
 
 Table table;
 
-float ecMax, ec2Max = 0;
-float ecMin, ec2Min = 1024;
+float ecMax, ec2Max = 0.0;
+float ecMin, ec2Min = 1024.0;
+float tempMax = -100.0;
+float tempMin = 100.0;
+
 int time = 0;
 int count1 = 0;
 int count2 = 0;
@@ -43,13 +46,18 @@ void setup() {
         ec2Min = min(ec2Min, value);
       }
       break;
+    case "moturoa/watertemp":
+      tempMax = max(tempMax, value);
+      tempMin = min(tempMin, value);
+
+      break;
     default:             // Default executes if the case labels
       //println("None");   // don't match the switch parameter
       break;
     }
   }
 
-  println("ecMax: ", ecMax, " & ecMin: ", ecMin, " , time: ", time);
+  println("ecMax: ", ecMax, " & ecMin: ", ecMin, " , time: ", time, " tempMax: ", tempMax, ", tempMin: ", tempMin);
 
   for (TableRow row : table.rows()) {
 
@@ -60,7 +68,7 @@ void setup() {
     case "moturoa/ec":
       float floatX = map(timestamp, 0, time, 0, width);
       float floatY = map(value, min(ecMin, ec2Min), max(ecMax, ec2Max), height-100, 0);
-      println("x: ", floatX, "y: ", floatY);
+      //println("x: ", floatX, "y: ", floatY);
       fill(255, 214, 8, 155);
       ellipse(floatX, floatY, 20, 20);
       fill(0);
@@ -72,14 +80,22 @@ void setup() {
     case "moturoa/ecrua":
       float floatX2 = map(timestamp, 0, time, width, 0);
       float floatY2 = map(value, min(ecMin, ec2Min), max(ecMax, ec2Max), height-100, 0);
-      println("x: ", floatX2, "y: ", floatY2);
-      fill(255, 0, 111 , 155);
+      //println("x: ", floatX2, "y: ", floatY2);
+      fill(255, 0, 111, 155);
       ellipse(floatX2, floatY2, 20, 20);
       fill(0);
       if (count2%20==0) {
         text(value, floatX2, floatY2-20);
       }
       count2++;
+      break;
+    case "moturoa/watertemp":
+      float x = map(timestamp, 0, time, width, 0);
+      float y = map(value, tempMin, tempMax, height-100, 100);
+      fill(0);
+      text(value, x, y-10);
+      ellipse(x, y, 10, 10);
+
       break;
     default:             // Default executes if the case labels
       //println("None");   // don't match the switch parameter
