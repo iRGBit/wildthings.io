@@ -14,7 +14,7 @@ int count2 = 0;
 
 void setup() {
 
-
+  noStroke();
   size(1280, 720);
   background (255);
 
@@ -59,24 +59,27 @@ void setup() {
     switch(channel) {
     case "moturoa/ec":
       float floatX = map(timestamp, 0, time, 0, width);
-      float floatY = map(value, ecMin, ecMax, 0, height-100);
+      float floatY = map(value, min(ecMin, ec2Min), max(ecMax, ec2Max), height-100, 0);
       println("x: ", floatX, "y: ", floatY);
-      fill(0, 255, 0);
+      fill(255, 214, 8, 155);
       ellipse(floatX, floatY, 20, 20);
       fill(0);
-      text(value, floatX, floatY-20);
+      if (count2%20==0) {
+        text(value, floatX, floatY-20);
+      }
       count1++;
       break;
     case "moturoa/ecrua":
       float floatX2 = map(timestamp, 0, time, width, 0);
-      float floatY2 = map(value, ec2Min, ec2Max, height-100, 0);
+      float floatY2 = map(value, min(ecMin, ec2Min), max(ecMax, ec2Max), height-100, 0);
       println("x: ", floatX2, "y: ", floatY2);
-      fill(255, 0, 0);
+      fill(255, 0, 111 , 155);
       ellipse(floatX2, floatY2, 20, 20);
       fill(0);
-      text(value, floatX2, floatY2-20);
+      if (count2%20==0) {
+        text(value, floatX2, floatY2-20);
+      }
       count2++;
-
       break;
     default:             // Default executes if the case labels
       //println("None");   // don't match the switch parameter
