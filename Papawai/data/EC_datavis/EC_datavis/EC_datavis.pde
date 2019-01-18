@@ -6,9 +6,11 @@
 
 Table table;
 
-float ecMax = 0;
-float ecMin = 1024;
+float ecMax, ec2Max = 0;
+float ecMin, ec2Min = 1024;
 int time = 0;
+int count1 = 0;
+int count2 = 0;
 
 void setup() {
 
@@ -25,20 +27,30 @@ void setup() {
     String channel = row.getString(0);
     float value = row.getFloat(1);
     int timestamp = row.getInt(2);
+
+    time = max(time, timestamp);
+
     switch(channel) {
     case "moturoa/ec":
       ecMax = max(ecMax, value);
-      ecMin = min(ecMin, value);
-      time = max(time, timestamp);
+      if (ecMin > 30) {
+        ecMin = min(ecMin, value);
+      }
+      break;
+    case "moturoa/ecrua":
+      ec2Max = max(ec2Max, value);
+      if (ec2Min > 30) {
+        ec2Min = min(ec2Min, value);
+      }
       break;
     default:             // Default executes if the case labels
       //println("None");   // don't match the switch parameter
       break;
     }
   }
-  
+
   println("ecMax: ", ecMax, " & ecMin: ", ecMin, " , time: ", time);
-  
+
   for (TableRow row : table.rows()) {
 
     String channel = row.getString(0);
@@ -47,10 +59,25 @@ void setup() {
     switch(channel) {
     case "moturoa/ec":
       float floatX = map(timestamp, 0, time, 0, width);
-      float floatY = map(value, ecMin, ecMax, 0, height);
+      float floatY = map(value, ecMin, ecMax, 0, height-100);
       println("x: ", floatX, "y: ", floatY);
+      fill(0, 255, 0);
       ellipse(floatX, floatY, 20, 20);
-        break;
+      fill(0);
+      text(value, floatX, floatY-20);
+      count1++;
+      break;
+    case "moturoa/ecrua":
+      float floatX2 = map(timestamp, 0, time, width, 0);
+      float floatY2 = map(value, ec2Min, ec2Max, height-100, 0);
+      println("x: ", floatX2, "y: ", floatY2);
+      fill(255, 0, 0);
+      ellipse(floatX2, floatY2, 20, 20);
+      fill(0);
+      text(value, floatX2, floatY2-20);
+      count2++;
+
+      break;
     default:             // Default executes if the case labels
       //println("None");   // don't match the switch parameter
       break;
