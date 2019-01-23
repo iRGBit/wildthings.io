@@ -26,6 +26,8 @@
 #include <ESP8266WiFi.h>
 #define node_name "Papawai-Kaituhituhi-Tahi"
 #define ecTopic "papawai/katuhi"
+#define spikeTopic "moturoa/spike" // spike in water - blink
+
 
 
 // LEDs
@@ -65,6 +67,18 @@ void callback(char* topic, byte * payload, unsigned int length) {
     //hl;
     //client.publish(confirmTopic, "ERROR");
 
+  }
+
+  if (strcmp(topic, spikeTopic) == 0) {
+    for (int c = 0; c < 8; c++) {
+      for (int p = 0; p < 5; p++) {
+        digitalWrite(ledPins[p], LOW);
+      }
+      delay(100);
+      for (int p = 0; p < 5; p++) {
+        digitalWrite(ledPins[p], HIGH);
+      }
+    }
   }
 }
 void reconnect() {
@@ -157,29 +171,44 @@ void loop() {
     reconnect();
   }
   client.loop();
+  int brightness = 0;
+  int fadeAmount = 5;
+  analogWrite(ledPins[3], brightness);
 
-  unsigned long currentMillis = millis();
+  // change the brightness for next time through the loop:
+  brightness = brightness + fadeAmount;
 
-  if (currentMillis - previousMillis >= interval) {
-    previousMillis = currentMillis;
-    //    if (ledState[count] == LOW) {
-    //      ledState[count] = HIGH;
-    //    }
-    //    else {
-    //      ledState[count] = LOW;
-    //    }
-    for (int p = 0; p < 5; p++) {
-      digitalWrite(ledPins[p], LOW);
-    }
-    digitalWrite(ledPins[count], HIGH);
-    if (count < 4) {
-      count++;
-    }
-    else
-    {
-      count = 0;
-    }
+  // reverse the direction of the fading at the ends of the fade:
+  if (brightness <= 0 || brightness >= 255) {
+    fadeAmount = -fadeAmount;
+  }
+  // wait for 30 milliseconds to see the dimming effect
+  delay(30);
+  
 
+  if (debug) { // just counting LEDs 1-5 [0-4]
+    unsigned long currentMillis = millis();
+    if (currentMillis - previousMillis >= interval) {
+      previousMillis = currentMillis;
+      //    if (ledState[count] == LOW) {
+      //      ledState[count] = HIGH;
+      //    }
+      //    else {
+      //      ledState[count] = LOW;
+      //    }
+      for (int p = 0; p < 5; p++) {
+        digitalWrite(ledPins[p], LOW);
+      }
+      digitalWrite(ledPins[count], HIGH);
+      if (count < 4) {
+        count++;
+      }
+      else
+      {
+        count = 0;
+      }
+
+    }
   }
 
   Serial.println(count);
