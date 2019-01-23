@@ -41,7 +41,7 @@ unsigned long previousMillis = 0;
 const long interval = 1000;
 
 //Debug Mode
-boolean debug = true; // set to true to read data via Serial
+boolean debug = false; // set to true to read data via Serial
 
 static int count = 0;
 
@@ -94,6 +94,7 @@ void callback(char* topic, byte * payload, unsigned int length) {
           Serial.println("OFF");
         }
       }
+      
 
       delay(500);
     }
