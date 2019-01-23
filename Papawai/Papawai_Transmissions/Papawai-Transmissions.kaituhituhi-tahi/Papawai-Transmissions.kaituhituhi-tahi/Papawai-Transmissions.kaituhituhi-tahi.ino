@@ -12,7 +12,8 @@
 //   wildthings.io - Birgit Bachler, Aotearoa/New Zealand, 2019
 //
 //   Wemos D1 Pro
-
+//
+//   To record datastream on your laptop: mosquitto_sub -v -h 192.168.42.1 -p 1883 -t '#' | xargs -d$'\n' -L1 sh -c 'date "+%D %T $0"' > 1612-nr2-datalog-2.log
 //   credits to
 //   James Lewis : https://www.baldengineer.com/mqtt-tutorial.html with adaptions as in the comments by Dag Rende & William Brinkman
 //   ItKindaWorks : http://github.com/ItKindaWorks - https://github.com/ItKindaWorks/ESP8266/blob/master/Home%20Automation/Part%201/ESP8266_SimpleMQTT/ESP8266_SimpleMQTT.ino
@@ -25,7 +26,7 @@
 #include <PubSubClient.h>
 #include <ESP8266WiFi.h>
 #define node_name "Papawai-Kaituhituhi-Tahi"
-#define ecTopic "papawai/katuhi"
+#define ecTopic "moturoa/ec"
 #define spikeTopic "moturoa/spike" // spike in water - blink
 
 
@@ -49,6 +50,10 @@ const char* ssid = "Moturoa_Transmissions";
 const char* password = "Tangaroa";
 const char* mqtt_server = "192.168.42.1";
 
+//LED fading
+int brightness = 0;
+int fadeAmount = 5;
+
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -70,17 +75,35 @@ void callback(char* topic, byte * payload, unsigned int length) {
   }
 
   if (strcmp(topic, spikeTopic) == 0) {
-    for (int c = 0; c < 8; c++) {
+    Serial.println("SPIKE");
+
+    for (int c = 0; c < 4; c++) {
       for (int p = 0; p < 5; p++) {
-        digitalWrite(ledPins[p], LOW);
-      }
-      delay(100);
-      for (int p = 0; p < 5; p++) {
+
         digitalWrite(ledPins[p], HIGH);
+        if (debug) {
+          Serial.println("ON");
+        }
       }
+
+      delay(500);
+      for (int p = 0; p < 5; p++) {
+
+        digitalWrite(ledPins[p], LOW);
+        if (debug) {
+          Serial.println("OFF");
+        }
+      }
+
+      delay(500);
     }
   }
+
+  else {
+
+  }
 }
+
 void reconnect() {
   //attempt to connect to the wifi if connection is lost
   if (WiFi.status() != WL_CONNECTED) {
@@ -121,7 +144,9 @@ void reconnect() {
           Serial.println("connected");
         }
         // ... and subscribe to topic
-        //       client.subscribe(tempTopic);
+        client.subscribe(spikeTopic);
+        client.subscribe(ecTopic);
+
 
 
       } else {
@@ -171,8 +196,7 @@ void loop() {
     reconnect();
   }
   client.loop();
-  int brightness = 0;
-  int fadeAmount = 5;
+
   analogWrite(ledPins[3], brightness);
 
   // change the brightness for next time through the loop:
@@ -184,34 +208,33 @@ void loop() {
   }
   // wait for 30 milliseconds to see the dimming effect
   delay(30);
-  
 
-  if (debug) { // just counting LEDs 1-5 [0-4]
-    unsigned long currentMillis = millis();
-    if (currentMillis - previousMillis >= interval) {
-      previousMillis = currentMillis;
-      //    if (ledState[count] == LOW) {
-      //      ledState[count] = HIGH;
-      //    }
-      //    else {
-      //      ledState[count] = LOW;
-      //    }
-      for (int p = 0; p < 5; p++) {
-        digitalWrite(ledPins[p], LOW);
-      }
-      digitalWrite(ledPins[count], HIGH);
-      if (count < 4) {
-        count++;
-      }
-      else
-      {
-        count = 0;
-      }
 
-    }
-  }
+  //  if (debug) { // just counting LEDs 1-5 [0-4]
+  //    unsigned long currentMillis = millis();
+  //    if (currentMillis - previousMillis >= interval) {
+  //      previousMillis = currentMillis;
+  //      //    if (ledState[count] == LOW) {
+  //      //      ledState[count] = HIGH;
+  //      //    }
+  //      //    else {
+  //      //      ledState[count] = LOW;
+  //      //    }
+  //      for (int p = 0; p < 5; p++) {
+  //        digitalWrite(ledPins[p], LOW);
+  //      }
+  //      digitalWrite(ledPins[count], HIGH);
+  //      if (count < 4) {
+  //        count++;
+  //      }
+  //      else
+  //      {
+  //        count = 0;
+  //      }
+  //
+  //    }
+  //  }
 
-  Serial.println(count);
 
 
 }
