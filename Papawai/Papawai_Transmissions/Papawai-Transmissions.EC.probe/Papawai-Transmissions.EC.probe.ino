@@ -25,7 +25,8 @@
 // MQTT
 #include <PubSubClient.h>
 #include <ESP8266WiFi.h>
-#define node_name "Papawai-ECrua"
+#define node_name "Papawai-EC"
+//#define node_name "Papawai-ECrua"
 #define ecTopic "moturoa/ecrua"
 #define spikeTopic "moturoa/spike"
 
