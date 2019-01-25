@@ -17,7 +17,7 @@ every 60 seconds - humidity float e.g. 37.0
 then every 60 seconds - airtemp float e.g 25.0
 
 ### Humidity & Rainsensor ###
-publish: none
+publish: moturoa/rain, moturoa/glowworm1/rain, moturoa/humid, moturoa/glowworm1/humid
 subscribe: none
 ```
 #define node_name "Moutroa-humidrain"
@@ -26,29 +26,38 @@ subscribe: none
 #define humidTopic "moturoa/humid"
 #define hpubTopic "moturoa/glowworm1/humid"
 ```
-every 30 seconds - rain: 0 = rain, 1= dry;
-every 30 seconds: humidity: 0-1024; 
+Interval: 
+Rain: Every 30 seconds
+Humidity: every 30 seconds
+
 #### Understanding the values: ####
+0 = rain, 1= dry;
+Humidity range: 0-1024
 0–300 : dry soil
 300–700 : humid soil
 700–950 : in water
-[Moisture Sensor Reference ][1]
+[Moisture Sensor Reference][1]
 [1]: https://www.dfrobot.com/wiki/index.php/Moisture_Sensor_(SKU:SEN0114) "Moisture Sensor Product Manual"
 
 ### EC ###
+publish: moturoa/ec, moturoa/spike
+subscribe: none
 ```
 #define node_name "Moutroa-EC"
 #define ecTopic "moturoa/ec"
 #define spikeTopic "moturoa/spike"
 ```
+Measuring interval: 10 seconds
+
 moturoa/ec 182.0
 moturoa/spike 1
-10 seconds
+
 
 ### Water Temperature ###
 ```
 #define node_name "Moturoa_watertemp"
 #define wTopic "moturoa/watertemp"
 ```
-25 seconds - 
+Measuring Interval: 25 seconds
+
 moturoa/watertemp 30.0
