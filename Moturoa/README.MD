@@ -1,4 +1,7 @@
 ## Moturoa Transmissions ##
+Moturoa Transmissions was installed for 3 days during the Upstream Arts Trail in Brooklyn, Wellington. The installation started out as a self-contained IoT network accompanied by the following artwork description:
+> A networked series of interventions in the surrounding environment of Moturoa Stream that senses and monitors change in a range of variables, such as temperature, humidity and conductivity. Together the stations enter a conversation beyond their mere weather-reflective qualities and given structure of  land, water and its human and non-human encounters to form a visually engaging addition to the ecosystem in which they are situated.
+
 
 ### DHT11 ###
 publish: none
