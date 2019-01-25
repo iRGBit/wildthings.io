@@ -1,7 +1,7 @@
 ## Moturoa Transmissions ##
-Moturoa Transmissions was installed for 3 days during the Upstream Arts Trail in Brooklyn, Wellington. The installation started out as a self-contained IoT network accompanied by the following artwork description:
+Moturoa Transmissions was installed for four days during the Upstream Arts Trail in Brooklyn, Wellington. The installation started out as a self-contained IoT network accompanied by the following artwork description:
 > A networked series of interventions in the surrounding environment of Moturoa Stream that senses and monitors change in a range of variables, such as temperature, humidity and conductivity. Together the stations enter a conversation beyond their mere weather-reflective qualities and given structure of  land, water and its human and non-human encounters to form a visually engaging addition to the ecosystem in which they are situated.
-
+The artwork was running every day and deinstalled for charging overnight. The inclusion of this work in a public art exhibition   provided an opportunity for audience feedback and allowed quick iterations and updates of the installed work overnight. 
 
 ### DHT11 ###
 publish: none
@@ -36,8 +36,8 @@ Humidity range: 0-1024
 0–300 : dry soil  
 300–700 : humid soil  
 700–950 : in water  
-[Moisture Sensor Reference][1]
-[1]: https://www.dfrobot.com/wiki/index.php/Moisture_Sensor_(SKU:SEN0114) "Moisture Sensor Product Manual"
+[Moisture Sensor Product Manual](https://www.dfrobot.com/wiki/index.php/Moisture_Sensor_(SKU:SEN0114))  
+
 
 ### EC ###
 publish: moturoa/ec, moturoa/spike  
