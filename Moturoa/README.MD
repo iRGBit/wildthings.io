@@ -13,7 +13,7 @@ subscribe: none
 #define hpubTopic "moturoa/glowworm1/ahumid"
 #define tpubTopic "moturoa/glowworm1/atemp"
 ```
-every 60 seconds - humidity float e.g. 37.0
+every 60 seconds - humidity float e.g. 37.0  
 then every 60 seconds - airtemp float e.g 25.0
 
 ### Humidity & Rainsensor ###
@@ -27,15 +27,15 @@ subscribe: none
 #define hpubTopic "moturoa/glowworm1/humid"
 ```
 Interval: 
-Rain: Every 30 seconds
+Rain: Every 30 seconds  
 Humidity: every 30 seconds
 
 #### Understanding the values: ####
-0 = rain, 1= dry;
+0 = rain, 1= dry;  
 Humidity range: 0-1024
-0–300 : dry soil
-300–700 : humid soil
-700–950 : in water
+0–300 : dry soil  
+300–700 : humid soil  
+700–950 : in water  
 [Moisture Sensor Reference][1]
 [1]: https://www.dfrobot.com/wiki/index.php/Moisture_Sensor_(SKU:SEN0114) "Moisture Sensor Product Manual"
 
