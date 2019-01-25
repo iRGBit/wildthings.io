@@ -1,6 +1,6 @@
 ## Moturoa Transmissions ##
 
-# DHT11 #
+### DHT11 ###
 publish: none
 subscribe: none
 ```
@@ -13,7 +13,7 @@ subscribe: none
 every 60 seconds - humidity float e.g. 37.0
 then every 60 seconds - airtemp float e.g 25.0
 
-# Humidity & Rainsensor #
+### Humidity & Rainsensor ###
 publish: none
 subscribe: none
 ```
@@ -25,14 +25,14 @@ subscribe: none
 ```
 every 30 seconds - rain: 0 = rain, 1= dry;
 every 30 seconds: humidity: 0-1024; 
-### Understanding the values: ###
+#### Understanding the values: ####
 0–300 : dry soil
 300–700 : humid soil
 700–950 : in water
 [Moisture Sensor Reference ][1]
 [1]: https://www.dfrobot.com/wiki/index.php/Moisture_Sensor_(SKU:SEN0114) "Moisture Sensor Product Manual"
 
-# EC #
+### EC ###
 ```
 #define node_name "Moutroa-EC"
 #define ecTopic "moturoa/ec"
@@ -42,7 +42,7 @@ moturoa/ec 182.0
 moturoa/spike 1
 10 seconds
 
-# Water Temperature #
+### Water Temperature ###
 ```
 #define node_name "Moturoa_watertemp"
 #define wTopic "moturoa/watertemp"
