@@ -32,7 +32,7 @@ Humidity: every 30 seconds
 
 #### Understanding the values: ####
 0 = rain, 1= dry;  
-Humidity range: 0-1024
+Humidity range: 0-1024  
 0–300 : dry soil  
 300–700 : humid soil  
 700–950 : in water  
@@ -40,17 +40,16 @@ Humidity range: 0-1024
 [1]: https://www.dfrobot.com/wiki/index.php/Moisture_Sensor_(SKU:SEN0114) "Moisture Sensor Product Manual"
 
 ### EC ###
-publish: moturoa/ec, moturoa/spike
+publish: moturoa/ec, moturoa/spike  
 subscribe: none
 ```
 #define node_name "Moutroa-EC"
 #define ecTopic "moturoa/ec"
 #define spikeTopic "moturoa/spike"
 ```
-Measuring interval: 10 seconds
-
-moturoa/ec 182.0
-moturoa/spike 1
+Measuring interval: 10 seconds  
+moturoa/ec 182.0  
+moturoa/spike 1  
 
 
 ### Water Temperature ###
@@ -58,6 +57,5 @@ moturoa/spike 1
 #define node_name "Moturoa_watertemp"
 #define wTopic "moturoa/watertemp"
 ```
-Measuring Interval: 25 seconds
-
+Measuring Interval: 25 seconds  
 moturoa/watertemp 30.0
