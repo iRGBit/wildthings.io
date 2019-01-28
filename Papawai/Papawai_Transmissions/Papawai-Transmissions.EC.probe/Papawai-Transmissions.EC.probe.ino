@@ -10,6 +10,9 @@
 //   Papawai Transmissions
 //   MQTT Client for Wemos D1
 //   wildthings.io - Birgit Bachler, Aotearoa/New Zealand, 2018
+
+
+
 //
 //   Wemos D1 with a DIY EC probe monitoring Papawai Stream, Te Upoko a te Ika a Maui/Wellington
 
@@ -25,7 +28,8 @@
 // MQTT
 #include <PubSubClient.h>
 #include <ESP8266WiFi.h>
-#define node_name "Papawai-ECrua"
+#define node_name "Papawai-EC"
+//#define node_name "Papawai-ECrua"
 #define ecTopic "moturoa/ecrua"
 #define spikeTopic "moturoa/spike"
 
