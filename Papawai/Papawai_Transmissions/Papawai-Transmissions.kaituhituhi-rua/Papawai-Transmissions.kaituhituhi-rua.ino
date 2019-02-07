@@ -82,54 +82,54 @@ void callback(char* topic, byte * payload, unsigned int length) {
     Serial.print("Topic: ");
     Serial.println(topic);
 
+  }
 
+  if (strcmp(topic, waterTempTopic) == 0) {
+    String reading = "";
+    for (int i = 0; i < length; i++) {
+      char receivedChar = (char)payload[i];
+      reading += receivedChar;
+    }
+    float temp = reading.toFloat(); // fetch current temperature as float
+    // then switch the right one on:
+    Serial.println(temp);
 
-    if (strcmp(topic, waterTempTopic) == 0) {
-      String reading = "";
-      for (int i = 0; i < length; i++) {
-        char receivedChar = (char)payload[i];
-        reading += receivedChar;
-      }
-      float temp = reading.toFloat(); // fetch current temperature as float
-      // then switch the right one on:
-      Serial.println(temp);
+    // for some reason, a loop for the following task just wouldn't work...
+    digitalWrite(D1, LOW);
+    digitalWrite(D2, LOW);
+    digitalWrite(D3, LOW);
+    digitalWrite(D4, LOW);
+    digitalWrite(D5, LOW);
+    digitalWrite(D6, LOW);
+    digitalWrite(D7, LOW);
+    digitalWrite(D8, LOW);
 
-      // for some reason, a loop for the following task just wouldn't work...
-      digitalWrite(D1, LOW);
-      digitalWrite(D2, LOW);
-      digitalWrite(D3, LOW);
-      digitalWrite(D4, LOW);
-      digitalWrite(D5, LOW);
-      digitalWrite(D6, LOW);
-      digitalWrite(D7, LOW);
-      digitalWrite(D8, LOW);
-
-      delay(100);
-      if (temp < 5) {
-        digitalWrite(D7, HIGH);
-      }
-      else if (temp >= 5 && temp < 10 ) {
-        digitalWrite(D4, HIGH);
-      }
-      else if (temp >= 10 && temp < 15 ) {
-        digitalWrite(D2, HIGH);
-      }
-      else if (temp >= 15 && temp < 20 ) {
-        digitalWrite(D3, HIGH);
-      }
-      else if (temp >= 20 && temp < 25 ) {
-        digitalWrite(D8, HIGH);
-      }
-      else if (temp >= 25 && temp < 30 ) {
-        digitalWrite(D5, HIGH);
-      }
-      else if (temp >= 30) {
-        digitalWrite(D6, HIGH);
-      }
-
+    delay(100);
+    if (temp < 5) {
+      digitalWrite(D7, HIGH);
+    }
+    else if (temp >= 5 && temp < 10 ) {
+      digitalWrite(D4, HIGH);
+    }
+    else if (temp >= 10 && temp < 15 ) {
+      digitalWrite(D2, HIGH);
+    }
+    else if (temp >= 15 && temp < 20 ) {
+      digitalWrite(D3, HIGH);
+    }
+    else if (temp >= 20 && temp < 25 ) {
+      digitalWrite(D8, HIGH);
+    }
+    else if (temp >= 25 && temp < 30 ) {
+      digitalWrite(D5, HIGH);
+    }
+    else if (temp >= 30) {
+      digitalWrite(D6, HIGH);
     }
 
   }
+
+
 
 }
 
