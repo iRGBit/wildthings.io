@@ -10,7 +10,7 @@
 //   Papawai Transmissions
 //   Audio Jar
 //   Adafruit Feather Huzzah + Audioshield
-//   MIDI solder soldered closed on bottom
+//   MIDI jumper soldered closed on bottom
 
 // MQTT
 
