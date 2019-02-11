@@ -11,7 +11,7 @@
 //   MQTT Client for Wemos D1
 //   wildthings.io - Birgit Bachler, Aotearoa/New Zealand, 2018
 //
-//   Wemos D1 with a humidity and temperature sensor DHT22 monitoring the environment of Moturoa Stream, Te Upoko a te Ika a Maui/Wellington
+//   Wemos D1 with a humidity and temperature sensor DHT22 monitoring the environment of Papawai Stream, Te Upoko a te Ika a Maui/Wellington
 //
 //    credits to
 //   James Lewis : https://www.baldengineer.com/mqtt-tutorial.html with adaptions as in the comments by Dag Rende & William Brinkman
@@ -32,7 +32,7 @@
 // MQTT
 #include <PubSubClient.h>
 #include <ESP8266WiFi.h>
-#define node_name "Moturoa_takawai"
+#define node_name "Papawai_takawai"
 #define hTopic "papawai/takawaiea" // air humidity | takawai-humidity ea-air
 #define tTopic "papawai/paemahanaea" // air temperature | paemahanea-temperature ea-air
 #define hpubTopic "papawai/glowworm1/takawaiea" // air humidity | takawai-humidity ea-air
