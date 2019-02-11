@@ -39,7 +39,7 @@
 #include <PubSubClient.h>
 #include <ESP8266WiFi.h>
 #define node_name "Papawai-Kaituhituhi-Rua"
-#define waterTempTopic "moturoa/watertemp"
+#define waterTempTopic "papawai/watertemp"
 
 
 
