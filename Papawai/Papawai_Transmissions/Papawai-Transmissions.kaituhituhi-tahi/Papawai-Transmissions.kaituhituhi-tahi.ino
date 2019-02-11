@@ -11,7 +11,7 @@
 //   MQTT Client for Wemos D1 Pro
 //   wildthings.io - Birgit Bachler, Aotearoa/New Zealand, 2019
 //
-//   Wemos D1 Pro
+//   Wemos D1 with LED to visualise EC stream
 //
 //   To record datastream on your laptop: mosquitto_sub -v -h 192.168.42.1 -p 1883 -t '#' | xargs -d$'\n' -L1 sh -c 'date "+%D %T $0"' > 1612-nr2-datalog-2.log
 //   credits to
@@ -26,8 +26,8 @@
 #include <PubSubClient.h>
 #include <ESP8266WiFi.h>
 #define node_name "Papawai-Kaituhituhi-Tahi"
-#define ecTopic "moturoa/ec"
-#define spikeTopic "moturoa/spike" // spike in water - blink
+#define ecTopic "papawai/ec"
+#define spikeTopic "papawai/spike" // spike in water - blink
 
 
 
