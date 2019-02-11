@@ -30,8 +30,8 @@
 #include <ESP8266WiFi.h>
 #define node_name "Papawai-EC"
 //#define node_name "Papawai-ECrua"
-#define ecTopic "moturoa/ecrua"
-#define spikeTopic "moturoa/spike"
+#define ecTopic "papawai/ec"
+#define spikeTopic "papawai/spike"
 
 
 // EC sensor
