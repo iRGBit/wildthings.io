@@ -13,7 +13,7 @@
 //   wildthings.io - Birgit Bachler, Aotearoa/New Zealand, 2019
 //
 
-boolean debug = true;
+boolean debug = false;
 
 // MQTT
 #include <PubSubClient.h>
