@@ -1,13 +1,13 @@
-//             _ _     _ _   _     _                   _       
-//            (_) |   | | | | |   (_)                 (_)      
-//   __      ___| | __| | |_| |__  _ _ __   __ _ ___   _  ___  
+//             _ _     _ _   _     _                   _
+//            (_) |   | | | | |   (_)                 (_)
+//   __      ___| | __| | |_| |__  _ _ __   __ _ ___   _  ___
 //   \ \ /\ / / | |/ _` | __| '_ \| | '_ \ / _` / __| | |/ _ \ 
 //    \ V  V /| | | (_| | |_| | | | | | | | (_| \__ \_| | (_) |
-//     \_/\_/ |_|_|\__,_|\__|_| |_|_|_| |_|\__, |___(_)_|\___/ 
-//                                        __/ |              
-//                                       |___/               
+//     \_/\_/ |_|_|\__,_|\__|_| |_|_|_| |_|\__, |___(_)_|\___/
+//                                        __/ |
+//                                       |___/
 
-//   Papawai Transmissions 
+//   Papawai Transmissions
 //   MQTT Client for Wemos D1
 //   wildthings.io - Birgit Bachler, Aotearoa/New Zealand, 2019
 //
@@ -44,6 +44,8 @@ const char* mqtt_server = "192.168.42.1";
 
 static int wait = 70000;
 
+boolean debug = false;
+
 WiFiClient espClient;
 PubSubClient client(espClient);
 
@@ -52,13 +54,13 @@ OneWire  ds(2);  // on pin 2 (a 4.7K resistor is necessary)
 
 void callback(char* topic, byte * payload, unsigned int length) {
   //convert topic to string to make it easier to work with
+  if (debug) {
+    //Print out some debugging info
+    Serial.println("Callback update.");
 
-  //Print out some debugging info
-  Serial.println("Callback update.");
-
-  Serial.print("Topic: ");
-  Serial.println(topic);
-
+    Serial.print("Topic: ");
+    Serial.println(topic);
+  }
 
 }
 
@@ -66,15 +68,18 @@ void reconnect() {
   //attempt to connect to the wifi if connection is lost
   if (WiFi.status() != WL_CONNECTED) {
     long waitTime = millis();
-    //debug printing
-    //    Serial.print("Connecting to ");
-    //    Serial.println(ssid);
-    //
+    if (debug) {
+      Serial.print("Connecting to ");
+      Serial.println(ssid);
+    }
 
     //loop while we wait for connection
     while (WiFi.status() != WL_CONNECTED) {
       delay(500);
-      //      Serial.print(".");
+      if (debug) {
+
+        Serial.print(".");
+      }
     }
 
     //print out some more debug once connected
@@ -86,20 +91,27 @@ void reconnect() {
   if (WiFi.status() == WL_CONNECTED) {
     // Loop until we're reconnected to the MQTT server
     while (!client.connected()) {
-      Serial.print("Attempting MQTT connection...");
+      if (debug) {
+        Serial.print("Attempting MQTT connection...");
+      }
       // Attempt to connect
       if (client.connect(node_name)) {
         client.disconnect();
         client.connect(node_name);
-        Serial.println("connected");
+        if (debug) {
+
+          Serial.println("connected");
+        }
         // ... and subscribe to topic
         //       client.subscribe(tempTopic);
 
 
       } else {
-        Serial.print("failed, rc=");
-        Serial.print(client.state());
-        Serial.println(" try again in 5 seconds");
+        if (debug) {
+          Serial.print("failed, rc=");
+          Serial.print(client.state());
+          Serial.println(" try again in 5 seconds");
+        }
         // Wait 5 seconds before retrying
         delay(5000);
       }
@@ -112,7 +124,9 @@ void setup() {
 
 
   //start the serial line for debugging
-  Serial.begin(9600);
+  if (debug) {
+    Serial.begin(9600);
+  }
   delay(100);
 
 
