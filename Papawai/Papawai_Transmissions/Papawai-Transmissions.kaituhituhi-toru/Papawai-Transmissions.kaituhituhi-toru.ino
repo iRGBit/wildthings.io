@@ -8,10 +8,11 @@
 //                                       | ___ /
 
 //   Papawai Transmissions
+//   LED visualiser for temperature probe
 //   MQTT Client for Wemos D1 Pro
 //   wildthings.io - Birgit Bachler, Aotearoa/New Zealand, 2019
 //
-//   Wemos D1 with LEDs to visualise turbidity data
+//   Wemos D1 Pro
 //
 //   To record datastream on your laptop: mosquitto_sub -v -h 192.168.42.1 -p 1883 -t '#' | xargs -d$'\n' -L1 sh -c 'date "+%D %T $0"' > 1612-nr2-datalog-2.log
 //   credits to
@@ -19,41 +20,41 @@
 //   ItKindaWorks : http://github.com/ItKindaWorks - https://github.com/ItKindaWorks/ESP8266/blob/master/Home%20Automation/Part%201/ESP8266_SimpleMQTT/ESP8266_SimpleMQTT.ino
 //   Paulus Schoutsen : https://home-assistant.io/blog/2015/10/11/measure-temperature-with-esp8266-and-report-to-mqtt/
 //
-//    Requires PubSubClient found here: https://github.com/knolleary/pubsubclient
+//   Requires PubSubClient found here: https://github.com/knolleary/pubsubclient
+
+// Wire Scheme:
+// blue wire - G
+
 
 
 // MQTT
+
 #include <PubSubClient.h>
 #include <ESP8266WiFi.h>
 #define node_name "Papawai-Kaituhituhi-Toru"
-#define turbidityTopic "papawai/renga"
+#define waterTempTopic "papawai/renga"
 
 
 
 // LEDs
-int ledPins[] = {D3, D0, D5, D7, D8, D6};
+int ledPins[] = {D0, D6, D8};
 
-static int ledNum = 6;
-int ledState[6];
+int ledState[3]; // initialise length of led state array manually
 
 unsigned long previousMillis = 0;
 
 const long interval = 1000;
 
 //Debug Mode
-boolean debug = false; // set to true to read data via Serial
+boolean debug = true; // set to true to read data via Serial
 
 static int count = 0;
-
 
 // Broker Setup
 const char* ssid = "Moturoa_Transmissions";
 const char* password = "Tangaroa";
 const char* mqtt_server = "192.168.42.1";
 
-//LED fading
-int brightness = 0;
-int myTurbdity = 0;
 
 
 WiFiClient espClient;
@@ -73,58 +74,51 @@ void callback(char* topic, byte * payload, unsigned int length) {
 
   }
 
-  if (strcmp(topic, turbidityTopic) == 0) {
+  if (strcmp(topic, waterTempTopic) == 0) {
     String reading = "";
     for (int i = 0; i < length; i++) {
       char receivedChar = (char)payload[i];
       reading += receivedChar;
     }
-    float turbidity = reading.toFloat(); // fetch current temperature as float
+    float temp = reading.toFloat(); // fetch current temperature as float
     // then switch the right one on:
-    if (debug) {
-      Serial.println(turbidity);
-    }
-    for (int i = 0; i < ledNum; i++) {
-      digitalWrite(ledPins[i], HIGH);
-    }
-    int num = (100 / turbidity) * 6;
+    Serial.println(temp);
+
     // for some reason, a loop for the following task just wouldn't work...
-    for (int i = 0; i < num; i++) {
-      digitalWrite(ledPins[i], HIGH);
-    }
-    delay(1000);
-    for (int i = 0; i < num; i++) {
-      digitalWrite(ledPins[i], LOW);
-    }
-    delay(1000);
-    /*    if (temp < 5) {
-          digitalWrite(D7, HIGH);
-        }
-        else if (temp >= 5 && temp < 10 ) {
-          digitalWrite(D4, HIGH);
-        }
-        else if (temp >= 10 && temp < 15 ) {
-          digitalWrite(D2, HIGH);
-        }
-        else if (temp >= 15 && temp < 20 ) {
-          digitalWrite(D3, HIGH);
-        }
-        else if (temp >= 20 && temp < 25 ) {
-          digitalWrite(D8, HIGH);
-        }
-        else if (temp >= 25 && temp < 30 ) {
-          digitalWrite(D5, HIGH);
-        }
-        else if (temp >= 30) {
-          digitalWrite(D6, HIGH);
-        }
-
-      }*/
+    digitalWrite(D0, LOW);
+    digitalWrite(D6, LOW);
+    digitalWrite(D8, LOW);
 
 
+//    delay(100);
+//    if (temp < 5) {
+//      digitalWrite(D7, HIGH);
+//    }
+//    else if (temp >= 5 && temp < 10 ) {
+//      digitalWrite(D4, HIGH);
+//    }
+//    else if (temp >= 10 && temp < 15 ) {
+//      digitalWrite(D2, HIGH);
+//    }
+//    else if (temp >= 15 && temp < 20 ) {
+//      digitalWrite(D3, HIGH);
+//    }
+//    else if (temp >= 20 && temp < 25 ) {
+//      digitalWrite(D8, HIGH);
+//    }
+//    else if (temp >= 25 && temp < 30 ) {
+//      digitalWrite(D5, HIGH);
+//    }
+//    else if (temp >= 30) {
+//      digitalWrite(D6, HIGH);
+//    }
 
   }
+
+
+
 }
+
 
 void reconnect() {
   //attempt to connect to the wifi if connection is lost
@@ -166,7 +160,7 @@ void reconnect() {
           Serial.println("connected");
         }
         // ... and subscribe to topic
-        client.subscribe(turbidityTopic);
+        client.subscribe(waterTempTopic);
 
 
 
@@ -185,7 +179,7 @@ void reconnect() {
 
 
 void setup() {
-  for (int p = 0; p < 5; p++) {
+  for (int p = 0; p < 3; p++) {
     pinMode(ledPins[p], OUTPUT);
     ledState[p] = LOW;
   }
@@ -218,35 +212,6 @@ void loop() {
   }
   client.loop();
 
-
-
-
-  //  if (debug) { // just counting LEDs 1-5 [0-4]
-  //    unsigned long currentMillis = millis();
-  //    if (currentMillis - previousMillis >= interval) {
-  //      previousMillis = currentMillis;
-  //      //    if (ledState[count] == LOW) {
-  //      //      ledState[count] = HIGH;
-  //      //    }
-  //      //    else {
-  //      //      ledState[count] = LOW;
-  //      //    }
-  //      for (int p = 0; p < 5; p++) {
-  //        digitalWrite(ledPins[p], LOW);
-  //      }
-  //      digitalWrite(ledPins[count], HIGH);
-  //      if (count < 4) {
-  //        count++;
-  //      }
-  //      else
-  //      {
-  //        count = 0;
-  //      }
-  //
-  //    }
-  //  }
-
-
+  //idle
 
 }
-
